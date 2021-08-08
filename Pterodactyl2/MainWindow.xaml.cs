@@ -61,5 +61,34 @@ namespace Pterodactyl2
             command = dbConnection.CreateCommand();
             return strCon;
         }
+
+        public bool checkIfExist(string TableName)
+        {
+            command.CommandText = "SELECT name FROM sqlite_master WHERE name='" + TableName + "'";
+            var result = command.ExecuteScalar();
+            return result != null && result.ToString() == TableName ? true : false;
+        }
+
+        public void executeQuery(string sqlCommand)
+        {
+            SQLiteCommand triggerCommand = dbConnection.CreateCommand();
+            triggerCommand.CommandText = sqlCommand;
+            triggerCommand.ExecuteNonQuery();
+        }
+
+        public bool checkIfTableontainsData(string tableName) {
+            command.CommandText = "SELECT count(*) FROM " + tableName;
+            var result = command.ExecuteScalar();
+            return Convert.ToInt32(result) > 0 ? true : false;
+        }
+
+        public void fillTable()
+        {
+            if (!checkIfTableontainsData("PANELS"))
+            {
+                sqlCommand = "insert into PANELS (code_test_type) values (999)";
+                executeQuery(sqlCommand);
+            }
+        }
     }
 }
